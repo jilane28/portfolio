@@ -32,9 +32,9 @@ const Storage = multer.diskStorage({
 });
 const upload = multer({ storage: Storage });
 
-const GoogleStrategy = require('passport-google-oauth20').Strategy;
+// const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
-const GitHubStrategy= require("passport-github2").Strategy;
+// const GitHubStrategy= require("passport-github2").Strategy;
 
 app.use(session({
   secret: "random",
@@ -70,7 +70,7 @@ googleId:String,
 
 // plugin passport
 userSchema.plugin(passportLocalMongoose);
-userSchema.plugin(findOrCreate);
+// userSchema.plugin(findOrCreate);
 // mongoose model
 const UserData = mongoose.model("UserData", userSchema);
 
@@ -88,60 +88,60 @@ done(err,user);
 });
 });
 
-// google strategy------------------------
-passport.use(new GoogleStrategy({
-    clientID: "787562156349-6j1g3tmcu9dv0i0hu3l1o8bi27chcbne.apps.googleusercontent.com",
-    clientSecret:"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" ,
-    callbackURL: "http://localhost:3000/auth/google/portfolio",
-userprofileURL:"https://www.googleapis.com/oath2/v3/userinfo",
+// // google strategy------------------------
+// passport.use(new GoogleStrategy({
+//     clientID: "787562156349-6j1g3tmcu9dv0i0hu3l1o8bi27chcbne.apps.googleusercontent.com",
+//     clientSecret:"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" ,
+//     callbackURL: "http://localhost:3000/auth/google/portfolio",
+// userprofileURL:"https://www.googleapis.com/oath2/v3/userinfo",
 
-  },
- function(accessToken, refreshToken, profile, cb) {
+//   },
+//  function(accessToken, refreshToken, profile, cb) {
 
-      UserData.findOrCreate({ googleId: profile.id,username:profile.displayName ,email:profile.emails[0].value}, function (err, user) {
-        return cb(err, user);
-      });
-    }
-));
+//       UserData.findOrCreate({ googleId: profile.id,username:profile.displayName ,email:profile.emails[0].value}, function (err, user) {
+//         return cb(err, user);
+//       });
+//     }
+// ));
 
-// github2 strategy--------------------------->
-passport.use(new GitHubStrategy({
-    clientID: "c68b55f86afd46426808",
-    clientSecret: "2d8cec0aaf29880dd3f3680d79af6dc7fffe970a",
-    callbackURL: "http://localhost:3000/auth/github/callback",
-scope: 'user:email'
-  },
-  function(accessToken, refreshToken, profile, cb) {
-console.log(profile);
-    UserData.findOrCreate({ githubId: profile.id,username:profile.username,email:profile.emails[0].value }, function (err, user) {
-      return cb(err, user);
-    });
-  }
-));
+// // github2 strategy--------------------------->
+// passport.use(new GitHubStrategy({
+//     clientID: "c68b55f86afd46426808",
+//     clientSecret: "2d8cec0aaf29880dd3f3680d79af6dc7fffe970a",
+//     callbackURL: "http://localhost:3000/auth/github/callback",
+// scope: 'user:email'
+//   },
+//   function(accessToken, refreshToken, profile, cb) {
+// console.log(profile);
+//     UserData.findOrCreate({ githubId: profile.id,username:profile.username,email:profile.emails[0].value }, function (err, user) {
+//       return cb(err, user);
+//     });
+//   }
+// ));
 
-// github auoth--------------------------------------->
-app.get('/auth/github',
-  passport.authenticate('github'));
+// // github auoth--------------------------------------->
+// app.get('/auth/github',
+//   passport.authenticate('github'));
 
-app.get('/auth/github/callback',
-  passport.authenticate('github', { failureRedirect: '/login' }),
-  function(req, res) {
-res.send("successfully authenticated with github")
-  });
-// google auth------------
-app.get('/auth/google',
-  passport.authenticate('google', { scope: [
-        'https://www.googleapis.com/auth/userinfo.profile',
-        'https://www.googleapis.com/auth/userinfo.email'
-    ] }));
+// app.get('/auth/github/callback',
+//   passport.authenticate('github', { failureRedirect: '/login' }),
+//   function(req, res) {
+// res.send("successfully authenticated with github")
+//   });
+// // google auth------------
+// app.get('/auth/google',
+//   passport.authenticate('google', { scope: [
+//         'https://www.googleapis.com/auth/userinfo.profile',
+//         'https://www.googleapis.com/auth/userinfo.email'
+//     ] }));
 
-app.get('/auth/google/portfolio',
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  function(req, res) {
+// app.get('/auth/google/portfolio',
+//   passport.authenticate('google', { failureRedirect: '/login' }),
+//   function(req, res) {
 
-    res.send("successfully authenticate wuth google");
+//     res.send("successfully authenticate wuth google");
 
-  });
+//   });
 
 // signup route
 app.get("/",(req,res)=>{
@@ -156,60 +156,60 @@ app.get("/",(req,res)=>{
 
 
 
-app.route("/signuup").get(function(req, res) {
-  res.render("partials/signup", {
-    Day: year.getYear()
-  })
-}).post((req, res) => {
-  const {
-    username,
-    email,
-    password
-  } = req.body;
+// app.route("/signuup").get(function(req, res) {
+//   res.render("partials/signup", {
+//     Day: year.getYear()
+//   })
+// }).post((req, res) => {
+//   const {
+//     username,
+//     email,
+//     password
+//   } = req.body;
 
-UserData.findOne({email:email},(err,docs)=>{
-if (docs) {
+// UserData.findOne({email:email},(err,docs)=>{
+// if (docs) {
 
-  console.log("duplicate email");
-  res.redirect("/signup")
-} else {
-  const users=new UserData({email: email, username :username});
-    UserData.register(users, password, (err,user) => {
-      if (err) {
+//   console.log("duplicate email");
+//   res.redirect("/signup")
+// } else {
+//   const users=new UserData({email: email, username :username});
+//     UserData.register(users, password, (err,user) => {
+//       if (err) {
      
-        res.redirect("/signup")
-      } else {
-        passport.authenticate("local")(req,res,() => {
-          res.send("successfully authenticated")
-        })
-      }
-    })
-}
-})
+//         res.redirect("/signup")
+//       } else {
+//         passport.authenticate("local")(req,res,() => {
+//           res.send("successfully authenticated")
+//         })
+//       }
+//     })
+// }
+// })
 
-})
+// })
 
 // signin route
-app.route("/lo0gin").get(function(req, res) {
+// app.route("/lo0gin").get(function(req, res) {
 
-    res.render("partials/login", {
-      Day: year.getYear()
-    })
-  }).post( function(req,res) {
-const {username,email,password}=req.body;
+//     res.render("partials/login", {
+//       Day: year.getYear()
+//     })
+//   }).post( function(req,res) {
+// const {username,email,password}=req.body;
 
-const user=new UserData({
-username:username,
-email:email,
-password:password
-});
-req.login(user,function(err){
-if(err){console.log(err)}else{passport.authenticate("local", { failureRedirect: '/login', failureMessage: true })(req,res,function() {
+// const user=new UserData({
+// username:username,
+// email:email,
+// password:password
+// });
+// req.login(user,function(err){
+// if(err){console.log(err)}else{passport.authenticate("local", { failureRedirect: '/login', failureMessage: true })(req,res,function() {
 
-  res.send("successfully loggedin");
-})}
-});
-});
+//   res.send("successfully loggedin");
+// })}
+// });
+// });
 
 
 // -------------------ROUTES-------------------------------------------------------->
