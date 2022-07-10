@@ -45,9 +45,9 @@ app.use(passport.initialize());
 app.use(passport.session());
 // mongose connect
 mongoose.connect(URL).then(() => {
-  console.log("database connected")
+
 }).catch((err) => {
-  console.log(err)
+
 });
 
 // mongodb schema
@@ -176,7 +176,7 @@ if (docs) {
   const users=new UserData({email: email, username :username});
     UserData.register(users, password, (err,user) => {
       if (err) {
-        console.log(err);
+     
         res.redirect("/signup")
       } else {
         passport.authenticate("local")(req,res,() => {
@@ -238,7 +238,7 @@ password:password
 });
 
 req.login(user,function(err){
-if(err){console.log(err)}else{passport.authenticate("local", {failureRedirect: '/thanks/failureMessage', failureMessage:true })(req,res,function() {
+if(err){}else{passport.authenticate("local", {failureRedirect: '/thanks/failureMessage', failureMessage:true })(req,res,function() {
 res.redirect("/");
 })}
 });
@@ -274,7 +274,7 @@ if (!result) {
 
     res.redirect("/");
 } else {
-console.log(result);
+
 res.send("successfully updated file.")
 }
 })
@@ -282,6 +282,6 @@ res.send("successfully updated file.")
 
 })
     app.listen(process.env.PORT || 3000, function() {
-            console.log("working")
+
           })
         
