@@ -269,7 +269,7 @@ if (!result) {
   imageData.save((err,doc)=>{
     if (err) {
       throw err
-    }else{"pic added to atlus"}
+    }else{}
   });
 
     res.redirect("/");
