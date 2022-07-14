@@ -280,8 +280,9 @@ res.send("successfully updated file.")
 })
 
 
-})
-    app.listen(process.env.PORT || 3000, function() {
+});
+const host="0.0.0.0";
+    app.listen(process.env.PORT || 3000,host, function() {
 
           })
         
